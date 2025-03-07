@@ -4,40 +4,40 @@ namespace App\Http\Controllers\Master;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Common\DataRequest;
-use App\Http\Requests\Master\SatuanKerja\StoreSatuanKerja;
-use App\Http\Requests\Master\SatuanKerja\UpdateSatuanKerja;
-use App\Models\SatuanKerja;
-use App\Repositories\Master\SatuanKerja\SatuanKerjaRepository;
+use App\Http\Requests\Master\PenyampaianKeterangan\StorePenyampaianKeterangan;
+use App\Http\Requests\Master\PenyampaianKeterangan\UpdatePenyampaianKeterangan;
+use App\Models\Ref\RefPenyampaianKeterangan;
+use App\Repositories\Master\PenyampaianKeterangan\PenyampaianKeteranganRepository;
 use App\Support\Facades\Memo;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controllers\HasMiddleware;
 use Illuminate\Routing\Controllers\Middleware;
 
-class SatuanKerjaController extends Controller implements HasMiddleware
+class PenyampaianKeteranganController extends Controller implements HasMiddleware
 {
-    protected SatuanKerjaRepository $repository;
+    protected PenyampaianKeteranganRepository $repository;
 
-    public function __construct(SatuanKerjaRepository $repository)
+    public function __construct(PenyampaianKeteranganRepository $repository)
     {
         $this->repository = $repository;
     }
     public static function middleware(): array
     {
         return [
-            new Middleware('can:satuan-kerja-index', only: ['index', 'data']),
-            new Middleware('can:satuan-kerja-create', only: ['store']),
-            new Middleware('can:satuan-kerja-update', only: ['update']),
-            new Middleware('can:satuan-kerja-delete', only: ['destroy'])
+            new Middleware('can:penyampaian-keterangan-index', only: ['index', 'data']),
+            new Middleware('can:penyampaian-keterangan-create', only: ['store']),
+            new Middleware('can:penyampaian-keterangan-update', only: ['update']),
+            new Middleware('can:penyampaian-keterangan-delete', only: ['destroy'])
         ];
     }
     private function gate(): array
     {
         $user = auth()->user();
-        return Memo::forHour('satuan-kerja-gate-' . $user->getKey(), function () use ($user) {
+        return Memo::forHour('penyampaian-keterangan-gate-' . $user->getKey(), function () use ($user) {
             return [
-                'create' => $user->can('satuan-kerja-create'),
-                'update' => $user->can('satuan-kerja-update'),
-                'delete' => $user->can('satuan-kerja-delete'),
+                'create' => $user->can('penyampaian-keterangan-create'),
+                'update' => $user->can('penyampaian-keterangan-update'),
+                'delete' => $user->can('penyampaian-keterangan-delete'),
             ];
         });
     }
@@ -48,7 +48,7 @@ class SatuanKerjaController extends Controller implements HasMiddleware
     public function index()
     {
         $gate = $this->gate();
-        return inertia('Master/SatuanKerja/Index', compact("gate"));
+        return inertia('Master/PenyampaianKeterangan/Index', compact("gate"));
     }
 
     /**
@@ -62,9 +62,8 @@ class SatuanKerjaController extends Controller implements HasMiddleware
     /**
      * Store a newly created resource in storage.
      */
-    public function store(StoreSatuanKerja $request)
+    public function store(StorePenyampaianKeterangan $request)
     {
-        // $@ngatRahas1a
         $this->repository->store($request);
         back()->with('success', 'Data berhasil ditambahkan');
     }
@@ -72,7 +71,7 @@ class SatuanKerjaController extends Controller implements HasMiddleware
     /**
      * Display the specified resource.
      */
-    public function show(SatuanKerja $satuanKerja)
+    public function show(RefPenyampaianKeterangan $penyampaianKeterangan)
     {
         abort(404);
     }
@@ -80,7 +79,7 @@ class SatuanKerjaController extends Controller implements HasMiddleware
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(SatuanKerja $satuanKerja)
+    public function edit(RefPenyampaianKeterangan $penyampaianKeterangan)
     {
         abort(404);
     }
@@ -88,18 +87,18 @@ class SatuanKerjaController extends Controller implements HasMiddleware
     /**
      * Update the specified resource in storage.
      */
-    public function update(UpdateSatuanKerja $request, SatuanKerja $satuanKerja)
+    public function update(UpdatePenyampaianKeterangan $request, RefPenyampaianKeterangan $penyampaianKeterangan)
     {
-        $this->repository->update($satuanKerja->id, $request);
+        $this->repository->update($penyampaianKeterangan->id, $request);
         back()->with('success', 'Data berhasil diubah');
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(SatuanKerja $satuanKerja)
+    public function destroy(RefPenyampaianKeterangan $penyampaianKeterangan)
     {
-        $this->repository->delete($satuanKerja->id);
+        $this->repository->delete($penyampaianKeterangan->id);
         back()->with('success', 'Data berhasil dihapus');
     }
 
@@ -117,13 +116,5 @@ class SatuanKerjaController extends Controller implements HasMiddleware
     public function allData(Request $request)
     {
         return response()->json($this->repository->allData($request), 200);
-    }
-
-    /**
-     * All resource from storage by user.
-     */
-    public function dataBerdasarkanUser()
-    {
-        return response()->json($this->repository->dataBerdasarkanUser(auth()->user()), 200);
     }
 }

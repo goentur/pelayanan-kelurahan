@@ -14,7 +14,7 @@ import {
 } from "@/Components/ui/command";
 import { Check, ChevronsUpDown } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Label } from "./ui/label";
 
 type SelectPopoverProps = {
@@ -23,15 +23,19 @@ type SelectPopoverProps = {
 	options: { value: string; label: string }[];
 	onSelect: (value: string) => void;
 	error?: string;
+	autoOpen?: boolean;
 };
 
-export default function SelectPopover({ label, selectedValue, options, onSelect, error}: SelectPopoverProps) {
+export default function SelectPopover({ label, selectedValue, options, onSelect, error,autoOpen}: SelectPopoverProps) {
 	const [open, setOpen] = useState(false);
+	useEffect(() => {
+		if (autoOpen) {
+			setOpen(true);
+		}
+	}, [autoOpen]);
 	return (
 		<div className="grid gap-2 w-full">
-			<Label className={cn({ "text-red-500": error }, "capitalize")}>
-				{label}
-			</Label>
+			{label && (<Label className={cn({ "text-red-500": error }, "capitalize")}>{label}</Label>)}
 			<Popover open={open} onOpenChange={setOpen}>
 				<PopoverTrigger asChild>
 				<Button

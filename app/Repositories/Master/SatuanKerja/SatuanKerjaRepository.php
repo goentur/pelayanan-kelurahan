@@ -3,6 +3,7 @@
 namespace App\Repositories\Master\SatuanKerja;
 
 use App\Http\Resources\Common\LabelValueResource;
+use App\Http\Resources\SatuanKerja\LabelValueResource as SatuanKerjaLabelValueResource;
 use App\Http\Resources\SatuanKerja\SatuanKerjaResource;
 use App\Models\SatuanKerja;
 use App\Models\User;
@@ -12,6 +13,11 @@ use Illuminate\Support\Facades\Hash;
 class SatuanKerjaRepository
 {
      public function __construct(protected SatuanKerja $model) {}
+     public function dataBerdasarkanUser($user)
+     {
+          $satuanKerja = $user?->satuanKerja[0];
+          return SatuanKerjaLabelValueResource::collection($satuanKerja->kelurahan);
+     }
      public function allData()
      {
           return LabelValueResource::collection($this->model::select('id', 'nama')->get());

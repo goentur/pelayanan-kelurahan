@@ -3,6 +3,8 @@
 namespace App\Http\Controllers\Pengaturan;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Pengaturan\Aplikasi\BakuAwalRequest;
+use App\Repositories\Pengaturan\BakuAwalRepository;
 use App\Support\Facades\Memo;
 use Illuminate\Routing\Controllers\HasMiddleware;
 use Illuminate\Routing\Controllers\Middleware;
@@ -10,6 +12,12 @@ use Illuminate\Support\Facades\Artisan;
 
 class AplikasiController extends Controller implements HasMiddleware
 {
+    protected BakuAwalRepository $repository;
+
+    public function __construct(BakuAwalRepository $repository)
+    {
+        $this->repository = $repository;
+    }
     public static function middleware(): array
     {
         return [
@@ -42,5 +50,10 @@ class AplikasiController extends Controller implements HasMiddleware
     public function optimizeClear()
     {
         return Artisan::call('optimize:clear');
+    }
+
+    public function bakuAwal(BakuAwalRequest $request)
+    {
+        return $this->repository->storeOrUpdate($request);
     }
 }

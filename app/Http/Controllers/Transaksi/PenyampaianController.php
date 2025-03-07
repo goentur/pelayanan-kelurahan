@@ -3,35 +3,45 @@
 namespace App\Http\Controllers\Transaksi;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
+use App\Http\Requests\Transaksi\Penyampaian\DataRequest;
+use App\Http\Requests\Transaksi\Penyampaian\SimpanRequest;
+use App\Repositories\Common\JenisBukuRepository;
+use App\Repositories\Master\SatuanKerja\SatuanKerjaRepository;
+use App\Repositories\Transaksi\PenyampaianRepository;
+use App\Support\Facades\Memo;
 use Illuminate\Routing\Controllers\HasMiddleware;
 use Illuminate\Routing\Controllers\Middleware;
 
 class PenyampaianController extends Controller implements HasMiddleware
 {
-    // protected PegawaiRepository $repository;
+    protected SatuanKerjaRepository $satKerjrepository;
+    protected PenyampaianRepository $repository;
+    protected JenisBukuRepository $jenisBukuRepository;
 
-    // public function __construct(PegawaiRepository $repository)
-    // {
-    //     $this->repository = $repository;
-    // }
+    public function __construct(
+        SatuanKerjaRepository $satKerjrepository,
+        PenyampaianRepository $repository,
+        JenisBukuRepository $jenisBukuRepository,
+    ) {
+        $this->satKerjrepository = $satKerjrepository;
+        $this->repository = $repository;
+        $this->jenisBukuRepository = $jenisBukuRepository;
+    }
     public static function middleware(): array
     {
         return [
-            new Middleware('can:pegawai-index', only: ['index', 'data']),
-            new Middleware('can:pegawai-create', only: ['store']),
-            new Middleware('can:pegawai-update', only: ['update']),
-            new Middleware('can:pegawai-delete', only: ['destroy'])
+            new Middleware('can:penyampaian-index', only: ['index', 'data']),
+            new Middleware('can:penyampaian-create', only: ['store']),
+            new Middleware('can:penyampaian-update', only: ['update'])
         ];
     }
     private function gate(): array
     {
         $user = auth()->user();
-        return Memo::forHour('pegawai-gate-' . $user->getKey(), function () use ($user) {
+        return Memo::forHour('penyampaian-gate-' . $user->getKey(), function () use ($user) {
             return [
-                'create' => $user->can('pegawai-create'),
-                'update' => $user->can('pegawai-update'),
-                'delete' => $user->can('pegawai-delete'),
+                'create' => $user->can('penyampaian-create'),
+                'update' => $user->can('penyampaian-update'),
             ];
         });
     }
@@ -41,20 +51,24 @@ class PenyampaianController extends Controller implements HasMiddleware
      */
     public function index()
     {
-        $user = auth()->user();
-        $data = [];
-        $satuanKerja = $user?->satuanKerja[0];
-        foreach ($satuanKerja->kelurahan as $value) {
-            $data[] = [
-                'kd_propinsi' => $value->kd_propinsi,
-                'kd_dati2' => $value->kd_dati2,
-                'kd_kecamatan' => $value->kd_kecamatan,
-                'kd_kelurahan' => $value->kd_kelurahan,
-                'nama' => $value->nm_kelurahan,
-            ];
-        }
-        dd($data);
         $gate = $this->gate();
-        return inertia('Transaksi/Penyampaian/Index', compact("gate"));
+        $jenisBuku = $this->jenisBukuRepository->data();
+        return inertia('Transaksi/Penyampaian/Index', compact("gate", "jenisBuku"));
+    }
+
+    /**
+     * Resource from storage.
+     */
+    public function data(DataRequest $request)
+    {
+        return response()->json($this->repository->data($request), 200);
+    }
+
+    /**
+     * Resource from storage.
+     */
+    public function simpan(SimpanRequest $request)
+    {
+        return response()->json($this->repository->simpan($request));
     }
 }

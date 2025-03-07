@@ -1,12 +1,12 @@
 <?php
 
-namespace App\Models;
+namespace App\Models\Ref;
 
 use Illuminate\Database\Eloquent\Model;
 
 class RefKelurahan extends Model
 {
-    protected $table = 'REF_KELURAHAN'; // Gunakan schema user lain
-    protected $primaryKey = 'KD_KEL_BR'; // Sesuaikan dengan primary key
+    protected $table = 'ref_kelurahan'; // Gunakan schema user lain
+    protected $primaryKey = 'kd_kel_br'; // Sesuaikan dengan primary key
     public $timestamps = false; // Jika tabel tidak memiliki timestamps (created_at, updated_at)
 }
