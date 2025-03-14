@@ -67,7 +67,7 @@ class PenyampaianController extends Controller implements HasMiddleware
     /**
      * Resource from storage.
      */
-    public function simpan(SimpanRequest $request)
+    public function store(SimpanRequest $request)
     {
         return response()->json($this->repository->simpan($request));
     }

@@ -23,7 +23,7 @@ return new class extends Migration
             $table->string('no_urut')->nullable();
             $table->string('kd_jns_op')->nullable();
             $table->string('tahun')->nullable();
-            $table->date('tanggal')->nullable()->comment('tanggal penyampaian');
+            $table->bigInteger('nominal')->nullable();
             $table->string('tipe')->nullable();
             $table->string('status')->nullable();
             $table->string('keterangan')->nullable();

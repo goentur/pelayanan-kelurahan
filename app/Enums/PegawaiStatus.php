@@ -2,18 +2,16 @@
 
 namespace App\Enums;
 
-enum PenyampaianTipe: string
+enum PegawaiStatus: string
 {
-    case TERSAMPAIKAN = 'TERSAMPAIKAN';
+    case AKTIF = 'AKTIF';
     case TIDAK = 'TIDAK';
-    case KEMBALI = 'KEMBALI';
 
     public function label(): string
     {
         return match ($this) {
-            self::TERSAMPAIKAN => 'TERSAMPAIKAN',
+            self::AKTIF => 'AKTIF',
             self::TIDAK => 'TIDAK',
-            self::KEMBALI => 'KEMBALI',
         };
     }
     public static function toArray(): array

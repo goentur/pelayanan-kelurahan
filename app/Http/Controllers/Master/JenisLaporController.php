@@ -2,44 +2,43 @@
 
 namespace App\Http\Controllers\Master;
 
+use App\Enums\PenyampaianTipe;
 use App\Http\Controllers\Controller;
-use App\Http\Requests\Master\Pegawai\DataRequest;
-use App\Http\Requests\Master\Pegawai\StatusRequest;
-use App\Http\Requests\Master\Pegawai\StorePegawai;
-use App\Http\Requests\Master\Pegawai\UpdatePegawai;
-use App\Models\Pegawai;
-use App\Models\RefPenyampaianKeterangan;
-use App\Repositories\Master\Pegawai\PegawaiRepository;
+use App\Http\Requests\Common\DataRequest;
+use App\Http\Requests\Master\JenisLapor\StoreJenisLapor;
+use App\Http\Requests\Master\JenisLapor\UpdateJenisLapor;
+use App\Models\JenisLapor;
+use App\Repositories\Master\JenisLapor\JenisLaporRepository;
 use App\Support\Facades\Memo;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controllers\HasMiddleware;
 use Illuminate\Routing\Controllers\Middleware;
 
-class PegawaiController extends Controller implements HasMiddleware
+class JenisLaporController extends Controller implements HasMiddleware
 {
-    protected PegawaiRepository $repository;
+    protected JenisLaporRepository $repository;
 
-    public function __construct(PegawaiRepository $repository)
+    public function __construct(JenisLaporRepository $repository)
     {
         $this->repository = $repository;
     }
     public static function middleware(): array
     {
         return [
-            new Middleware('can:pegawai-index', only: ['index', 'data']),
-            new Middleware('can:pegawai-create', only: ['store']),
-            new Middleware('can:pegawai-update', only: ['update']),
-            new Middleware('can:pegawai-delete', only: ['destroy'])
+            new Middleware('can:jenis-lapor-index', only: ['index', 'data']),
+            new Middleware('can:jenis-lapor-create', only: ['store']),
+            new Middleware('can:jenis-lapor-update', only: ['update']),
+            new Middleware('can:jenis-lapor-delete', only: ['destroy'])
         ];
     }
     private function gate(): array
     {
         $user = auth()->user();
-        return Memo::forHour('pegawai-gate-' . $user->getKey(), function () use ($user) {
+        return Memo::forHour('jenis-lapor-gate-' . $user->getKey(), function () use ($user) {
             return [
-                'create' => $user->can('pegawai-create'),
-                'update' => $user->can('pegawai-update'),
-                'delete' => $user->can('pegawai-delete'),
+                'create' => $user->can('jenis-lapor-create'),
+                'update' => $user->can('jenis-lapor-update'),
+                'delete' => $user->can('jenis-lapor-delete'),
             ];
         });
     }
@@ -50,7 +49,8 @@ class PegawaiController extends Controller implements HasMiddleware
     public function index()
     {
         $gate = $this->gate();
-        return inertia('Master/Pegawai/Index', compact("gate"));
+        $tipePenyampaian = PenyampaianTipe::toArray();
+        return inertia('Master/JenisLapor/Index', compact("gate", "tipePenyampaian"));
     }
 
     /**
@@ -64,7 +64,7 @@ class PegawaiController extends Controller implements HasMiddleware
     /**
      * Store a newly created resource in storage.
      */
-    public function store(StorePegawai $request)
+    public function store(StoreJenisLapor $request)
     {
         $this->repository->store($request);
         back()->with('success', 'Data berhasil ditambahkan');
@@ -73,7 +73,7 @@ class PegawaiController extends Controller implements HasMiddleware
     /**
      * Display the specified resource.
      */
-    public function show(Pegawai $pegawai)
+    public function show(JenisLapor $jenisLapor)
     {
         abort(404);
     }
@@ -81,7 +81,7 @@ class PegawaiController extends Controller implements HasMiddleware
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(Pegawai $pegawai)
+    public function edit(JenisLapor $jenisLapor)
     {
         abort(404);
     }
@@ -89,18 +89,18 @@ class PegawaiController extends Controller implements HasMiddleware
     /**
      * Update the specified resource in storage.
      */
-    public function update(UpdatePegawai $request, Pegawai $pegawai)
+    public function update(UpdateJenisLapor $request, JenisLapor $jenisLapor)
     {
-        $this->repository->update($pegawai->id, $request);
+        $this->repository->update($jenisLapor->id, $request);
         back()->with('success', 'Data berhasil diubah');
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Pegawai $pegawai)
+    public function destroy(JenisLapor $jenisLapor)
     {
-        $this->repository->delete($pegawai->id);
+        $this->repository->delete($jenisLapor->id);
         back()->with('success', 'Data berhasil dihapus');
     }
 
@@ -110,14 +110,6 @@ class PegawaiController extends Controller implements HasMiddleware
     public function data(DataRequest $request)
     {
         return response()->json($this->repository->data($request), 200);
-    }
-
-    /**
-     * Update the specified resource in storage.
-     */
-    public function status(StatusRequest $request)
-    {
-        return response()->json($this->repository->status($request), 200);
     }
 
     /**

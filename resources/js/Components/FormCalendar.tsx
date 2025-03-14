@@ -9,9 +9,10 @@ interface DatePickerProps {
   onChange: (date: Date | null) => void;
   label?: string;
   autoOpen?: boolean;
+  tanggalSelanjutnya?: boolean | false;
 }
 
-export default function FormCalendar({ value, onChange, label,autoOpen }: DatePickerProps) {
+export default function FormCalendar({ value, onChange, label,autoOpen,tanggalSelanjutnya }: DatePickerProps) {
   const [open, setOpen] = useState(false);
   useEffect(() => {
     if (autoOpen) {
@@ -42,7 +43,7 @@ export default function FormCalendar({ value, onChange, label,autoOpen }: DatePi
               onChange(date);
               setOpen(false);
             }}
-            disabled={(date) => date > new Date()}
+            disabled={tanggalSelanjutnya ? false : (date) => date > new Date()}
           />
         </PopoverContent>
       </Popover>

@@ -1,8 +1,10 @@
 <?php
 
-namespace App\Http\Requests\Transaksi\Penyampaian;
+namespace App\Http\Requests\Transaksi\LaporanPenyampaian;
 
+use App\Enums\PenyampaianTipe;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rules\Enum;
 
 class SimpanRequest extends FormRequest
 {
@@ -22,10 +24,8 @@ class SimpanRequest extends FormRequest
      public function rules(): array
      {
           return [
-               'id' => 'required|string',
-               'type' => 'required|in:ya,tidak',
-               'nominal' => 'required|string',
-               'value' => 'required|string',
+               'id' => 'required|uuid',
+               'jenis' => ['required', new Enum(PenyampaianTipe::class)],
           ];
      }
 }

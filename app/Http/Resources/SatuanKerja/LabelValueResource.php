@@ -16,7 +16,7 @@ class LabelValueResource extends JsonResource
     {
         return [
             'value' => $this->kd_propinsi . '.' . $this->kd_dati2 . '.' . $this->kd_kecamatan . '.' . $this->kd_kelurahan,
-            'label' => $this->nm_kelurahan,
+            'label' => $this->kd_propinsi . '.' . $this->kd_dati2 . '.' . $this->kd_kecamatan . '.' . $this->kd_kelurahan . ' - ' . $this->nm_kelurahan,
         ];
     }
 }

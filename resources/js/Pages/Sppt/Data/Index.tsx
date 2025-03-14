@@ -14,27 +14,22 @@ import { useEffect, useState } from 'react';
 import DataTable from './Components/DataTable';
 
 type indexProps = {
-    gate: {
-        create : boolean,
-        update : boolean,
-    };
     jenisBuku : {
         value : string,
         label : string,
     }[]
 };
 
-export default function Index({gate, jenisBuku}:indexProps) {
-    const judul = "Penyampaian";
+export default function Index({jenisBuku}:indexProps) {
+    const judul = "SPPT";
     const [loading, setLoading] = useState(false);
     const [dataTable, setDataTable] = useState<[]>([]);
     const [dataBerdasarkanUser, setDataBerdasarkanUser] = useState<[]>([]);
-    const [dataPenyampaianKeterangan, setDataPenyampaianKeterangan] = useState<[]>([]);
     const [linksPagination, setLinksPagination] = useState([]);
     const [dataInfo, setDataInfo] = useState({
         currentPage: 1,
-        from: 1,
-        to: 1,
+        from: 0,
+        to: 0,
         totalRecords: 0,
         perPage: 25,
     });
@@ -47,7 +42,6 @@ export default function Index({gate, jenisBuku}:indexProps) {
 
     useEffect(() => {
         getDataKelurahanBerdasarkanUser();
-        getDataPenyampaianKeterangan();
     }, []);
     
     useEffect(() => {
@@ -60,7 +54,7 @@ export default function Index({gate, jenisBuku}:indexProps) {
         if (data.kelurahan) {
             setLoading(true);
             try {
-                const response = await axios.post(route('transaksi.penyampaian.data'), {
+                const response = await axios.post(route('sppt.data.data'), {
                     page: dataInfo.currentPage,
                     perPage: dataInfo.perPage,
                     jenisBuku: data.jenisBuku,
@@ -92,14 +86,6 @@ export default function Index({gate, jenisBuku}:indexProps) {
         try {
             const response = await axios.post(route('master.satuan-kerja.data-berdasarkan-user'));
             setDataBerdasarkanUser(response.data);
-        } catch (error:any) {
-            alertApp(error.message, 'error');
-        }
-    };
-    const getDataPenyampaianKeterangan = async () => {
-        try {
-            const response = await axios.post(route('master.penyampaian-keterangan.all-data'));
-            setDataPenyampaianKeterangan(response.data);
         } catch (error:any) {
             alertApp(error.message, 'error');
         }
@@ -175,7 +161,7 @@ export default function Index({gate, jenisBuku}:indexProps) {
                             </div>
                         </div>
                     </form>
-                    <DataTable gate={gate} dataTable={dataTable} dataInfo={dataInfo.from}dataPenyampaianKeterangan={dataPenyampaianKeterangan} />
+                    <DataTable dataTable={dataTable} />
                     <PaginationControls dataInfo={dataInfo} setDataInfo={setDataInfo} linksPagination={linksPagination} />
                 </CardContent>
             </Card>

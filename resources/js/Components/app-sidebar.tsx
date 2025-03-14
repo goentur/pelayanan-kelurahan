@@ -2,6 +2,7 @@ import {
 	Building,
 	FileCheck2,
 	FileMinus2,
+	FileSearch,
 	FileText,
 	HandCoins,
 	Key,
@@ -65,6 +66,12 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
 				icon: Medal,
 				permission: 'pegawai-index',
 			},
+			{
+				title: "Jenis Lapor",
+				url: "master.jenis-lapor.index",
+				icon: Send,
+				permission: 'jenis-lapor-index',
+			},
 		],
 		menuTransaksi: [
 			{
@@ -74,10 +81,18 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
 				permission: 'penyampaian-index',
 			},
 			{
-				title: "Lapor",
-				url: "transaksi.penyampaian.index",
+				title: "Laporan Penyampaian",
+				url: "transaksi.laporan-penyampaian.index",
 				icon: Send,
-				permission: 'lapor-index',
+				permission: 'laporan-penyampaian-index',
+			},
+		],
+		menuSppt: [
+			{
+				title: "Data",
+				url: "sppt.data.index",
+				icon: FileSearch,
+				permission: 'sppt-data-index',
 			},
 		],
 		navSecondary: [
@@ -128,6 +143,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
 		</SidebarHeader>
 		<SidebarContent className="sidebar-scrollbar">
 			<NavMain items={data.menuTransaksi} title={'Transaksi'} permissions={permissions} />
+			<NavMain items={data.menuSppt} title={'SPPT'} permissions={permissions} />
 			<NavMain items={data.menuMaster} title={'Master'} permissions={permissions} />
 			<NavSecondary items={data.navSecondary} permissions={permissions} className="mt-auto" />
 		</SidebarContent>

@@ -78,4 +78,14 @@ class SatuanKerjaRepository
      {
           return $this->model->findOrFail($id)?->delete();
      }
+     public function collectionData()
+     {
+          $satuanKerja = $this->dataBerdasarkanUser(auth()->user());
+          return [
+               'propinsi' => $satuanKerja->pluck('kd_propinsi')->unique()->values(),
+               'dati2' => $satuanKerja->pluck('kd_dati2')->unique()->values(),
+               'kecamatan' => $satuanKerja->pluck('kd_kecamatan')->unique()->values(),
+               'kelurahan' => $satuanKerja->pluck('kd_kelurahan')->unique()->values(),
+          ];
+     }
 }

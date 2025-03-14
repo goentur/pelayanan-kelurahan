@@ -2,6 +2,7 @@
 
 namespace App\Repositories\Master\Pegawai;
 
+use App\Enums\PegawaiStatus;
 use App\Http\Resources\Common\LabelValueResource;
 use App\Http\Resources\Pegawai\PegawaiResource;
 use App\Models\Pegawai;
@@ -16,7 +17,7 @@ class PegawaiRepository
      }
      public function data($request)
      {
-          $query = $this->model::select('id', 'jabatan_id', 'nik', 'nip', 'nama', 'no_rekening')->where('satuan_kerja_id', $request->satuan_kerja);
+          $query = $this->model::select('id', 'jabatan_id', 'nik', 'nip', 'nama', 'no_rekening', 'status')->where('satuan_kerja_id', $request->satuan_kerja);
           if ($request->search) {
                $query->where('nik', 'like', "%{$request->search}%")
                     ->orWhere('nip', 'like', "%{$request->search}%")
@@ -38,6 +39,7 @@ class PegawaiRepository
                     'nip' => $request->nip,
                     'nama' => $request->nama,
                     'no_rekening' => $request->no_rekening,
+                    'status' => PegawaiStatus::AKTIF,
                ]);
                DB::commit();
           } catch (\Exception $e) {
@@ -63,5 +65,20 @@ class PegawaiRepository
      public function delete($id)
      {
           return $this->model->findOrFail($id)?->delete();
+     }
+     public function status($request)
+     {
+          try {
+               DB::beginTransaction();
+               $data = $this->model::find($request->id);
+               $data->update([
+                    'status' => $request->status ? PegawaiStatus::AKTIF : PegawaiStatus::TIDAK,
+               ]);
+               DB::commit();
+               return "Data berhasil diubah";
+          } catch (\Exception $e) {
+               DB::rollBack();
+               throw $e;
+          }
      }
 }

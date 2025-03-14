@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 class Penyampaian extends Model
 {
     use HasUuids;
-    protected $fillable = ['user_id', 'penyampaian_keterangan_id', 'kd_propinsi', 'kd_dati2', 'kd_kecamatan', 'kd_kelurahan', 'kd_blok', 'no_urut', 'kd_jns_op', 'tahun', 'tanggal', 'tipe', 'status', 'keterangan'];
+    protected $fillable = ['user_id', 'penyampaian_keterangan_id', 'jenis_lapor_id', 'kd_propinsi', 'kd_dati2', 'kd_kecamatan', 'kd_kelurahan', 'kd_blok', 'no_urut', 'kd_jns_op', 'tahun', 'nominal', 'tipe', 'status', 'keterangan'];
 
     public function bakuAwal()
     {

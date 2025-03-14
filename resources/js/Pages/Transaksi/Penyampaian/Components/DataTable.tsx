@@ -8,18 +8,13 @@ type DataTableProps = {
     gate: {
         create: boolean;
         update: boolean;
-        delete: boolean;
     };
-    loading: boolean;
     dataTable: any[];
     dataInfo: number;
-    setForm: React.Dispatch<React.SetStateAction<boolean>>;
-    setIsEdit: React.Dispatch<React.SetStateAction<boolean>>;
-    setHapus: React.Dispatch<React.SetStateAction<boolean>>;
     dataPenyampaianKeterangan: any[];
 };
 
-export default function DataTable({ dataTable, dataPenyampaianKeterangan }: DataTableProps) {
+export default function DataTable({ gate, dataTable, dataPenyampaianKeterangan }: DataTableProps) {
     const [loadingState, setLoadingState] = useState<{ [key: string]: boolean }>({});
     const [selectedItemTabel, setSelectedItemTabel] = useState<{ [key: string]: boolean }>({});
     const [editedData, setEditedData] = useState<{ [key: string]: { ya?: any; tidak?: string } }>({});
@@ -30,12 +25,13 @@ export default function DataTable({ dataTable, dataPenyampaianKeterangan }: Data
         setSelectedItemTabel((prev) => ({ ...prev, [index]: isYes }));
     };
 
-    const handleChange = async (id: string, type: "ya" | "tidak", value: any) => {
+    const handleChange = async (id: string, type: "ya" | "tidak", value: any,nominal: string) => {
         setLoadingState((prev) => ({ ...prev, [id]: true }));
         try {
-            const response = await axios.post(route('transaksi.penyampaian.simpan'), {
+            const response = await axios.post(route('transaksi.penyampaian.store'), {
                 id: id,
                 type: type,
+                nominal: nominal,
                 value: value,
             });
             setEditedData((prev) => ({
@@ -133,7 +129,7 @@ export default function DataTable({ dataTable, dataPenyampaianKeterangan }: Data
                         )}
                     </td>
                     <td className="px-2 py-1 border text-center">
-                        { value.penyampaian && !value.penyampaian.status.status ? null : 
+                        { gate.create && gate.update && value.penyampaian && !value.penyampaian.status.status ? null : 
                             <button
                                 onClick={() => handleSelectItem(value.id, true)}
                                 className="p-0 bg-green-500 text-white m-0 rounded hover:bg-green-600"
@@ -145,7 +141,7 @@ export default function DataTable({ dataTable, dataPenyampaianKeterangan }: Data
                     </td>
 
                     <td className="px-2 py-1 border text-center">
-                        { value.penyampaian && !value.penyampaian.status.status ? null : 
+                        { gate.create && gate.update && value.penyampaian && !value.penyampaian.status.status ? null : 
                             <button
                                 onClick={() => handleSelectItem(value.id, false)}
                                 className="p-0 bg-red-500 text-white m-0 rounded hover:bg-red-600"
@@ -159,7 +155,7 @@ export default function DataTable({ dataTable, dataPenyampaianKeterangan }: Data
                         {selectedItemTabel[value.id] === true ? (
                             <FormCalendar
                                 value={editedData[value.id]?.ya || null}
-                                onChange={(v) => handleChange(value.id, "ya", v)}
+                                onChange={(v) => handleChange(value.id, "ya", v, value.pajak)}
                                 autoOpen={true}
                             />
                         ) : selectedItemTabel[value.id] === false ? (
@@ -167,7 +163,7 @@ export default function DataTable({ dataTable, dataPenyampaianKeterangan }: Data
                                 label=""
                                 selectedValue={editedData[value.id]?.tidak || ""}
                                 options={dataPenyampaianKeterangan}
-                                onSelect={(v) => handleChange(value.id, "tidak", v)}
+                                onSelect={(v) => handleChange(value.id, "tidak", v, value.pajak)}
                                 error={""}
                                 autoOpen={true}
                             />
@@ -184,7 +180,7 @@ export default function DataTable({ dataTable, dataPenyampaianKeterangan }: Data
                 ))
             ) : (
                 <tr>
-                <td colSpan={10}>
+                <td colSpan={11}>
                     <div className="flex items-center justify-center">
                     <DatabaseBackup size={18} className="me-2" /> Data tidak ditemukan
                     </div>

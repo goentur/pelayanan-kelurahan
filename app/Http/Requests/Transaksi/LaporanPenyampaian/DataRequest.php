@@ -1,10 +1,12 @@
 <?php
 
-namespace App\Http\Requests\Transaksi\Penyampaian;
+namespace App\Http\Requests\Transaksi\LaporanPenyampaian;
 
+use App\Enums\PenyampaianTipe;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rules\Enum;
 
-class SimpanRequest extends FormRequest
+class DataRequest extends FormRequest
 {
      /**
       * Determine if the user is authorized to make this request.
@@ -22,10 +24,9 @@ class SimpanRequest extends FormRequest
      public function rules(): array
      {
           return [
-               'id' => 'required|string',
-               'type' => 'required|in:ya,tidak',
-               'nominal' => 'required|string',
-               'value' => 'required|string',
+               'page' => 'required|numeric',
+               'perPage' => 'required|numeric|max:100|min:25',
+               'jenis' => ['required', new Enum(PenyampaianTipe::class)],
           ];
      }
 }
