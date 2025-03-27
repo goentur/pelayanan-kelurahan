@@ -2,6 +2,7 @@
 
 namespace App\Repositories\Master\Pegawai;
 
+use App\Enums\JabatanJenis;
 use App\Enums\PegawaiStatus;
 use App\Http\Resources\Common\LabelValueResource;
 use App\Http\Resources\Pegawai\PegawaiResource;
@@ -80,5 +81,57 @@ class PegawaiRepository
                DB::rollBack();
                throw $e;
           }
+     }
+     public function pegawaiPetugasCollection($user)
+     {
+          $petugas = $this->model::select('nip', 'nama')->where([
+               'satuan_kerja_id' => $user?->satuanKerja[0]->id,
+               'status' => PegawaiStatus::AKTIF,
+          ])->limit(2)->whereHas('jabatan', fn($q) => $q->where('jenis', JabatanJenis::PETUGAS))->get();
+          $namaPetugas = [];
+          $nipPetugas = [];
+          foreach ($petugas as $value) {
+               $namaPetugas[] = $value->nama;
+               $nipPetugas[] = $value->nip ? 'NIP : ' . $value->nip : '';
+          }
+          return [
+               'nama' => $namaPetugas,
+               'nip' => $nipPetugas,
+          ];
+     }
+     public function pegawaiLurah($user)
+     {
+          return $this->model::select('nip', 'nama')->where([
+               'satuan_kerja_id' => $user?->satuanKerja[0]->id,
+               'status' => PegawaiStatus::AKTIF,
+          ])->whereHas('jabatan', fn($q) => $q->where([
+               'nama' => 'LURAH',
+               'jenis' => JabatanJenis::KEPALA
+          ]))->first();
+     }
+     public function pegawaiCamat($user)
+     {
+          return $this->model::select('nip', 'nama')->where([
+               'satuan_kerja_id' => $user?->satuanKerja[0]->atasan?->id,
+               'status' => PegawaiStatus::AKTIF,
+          ])->whereHas('jabatan', fn($q) => $q->where([
+               'nama' => 'CAMAT',
+               'jenis' => JabatanJenis::KEPALA
+          ]))->first();
+     }
+     public function pegawaiKepalaCollection($user)
+     {
+          $pegawaiLurah = $this->pegawaiLurah($user);
+          $pegawaiCamat = $this->pegawaiCamat($user);
+          return [
+               'nama' => [
+                    $pegawaiLurah->nama,
+                    $pegawaiCamat->nama,
+               ],
+               'nip' => [
+                    $pegawaiLurah->nip ? 'NIP : ' . $pegawaiLurah->nip : '',
+                    $pegawaiCamat->nip ? 'NIP : ' . $pegawaiCamat->nip : '',
+               ],
+          ];
      }
 }

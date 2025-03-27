@@ -20,7 +20,7 @@ import { Label } from "./ui/label";
 type SelectPopoverProps = {
 	label: string;
 	selectedValue: string;
-	options: { value: string; label: string }[];
+	options: { value: string; label: string; status?:boolean }[];
 	onSelect: (value: string) => void;
 	error?: string;
 	autoOpen?: boolean;
@@ -60,6 +60,7 @@ export default function SelectPopover({ label, selectedValue, options, onSelect,
 						<CommandItem
 							key={d.value}
 							value={d.value}
+							disabled={d.status}
 							onSelect={() => {
 							onSelect(d.value);
 							setOpen(false);

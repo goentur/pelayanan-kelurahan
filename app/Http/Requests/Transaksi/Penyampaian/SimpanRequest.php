@@ -24,8 +24,10 @@ class SimpanRequest extends FormRequest
           return [
                'id' => 'required|string',
                'type' => 'required|in:ya,tidak',
-               'nominal' => 'required|string',
                'value' => 'required|string',
+               'nama_wp' => 'required|string',
+               'alamat_objek' => 'required|string',
+               'nominal' => 'required|string',
           ];
      }
 }

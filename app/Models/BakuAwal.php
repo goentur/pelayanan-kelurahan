@@ -2,10 +2,12 @@
 
 namespace App\Models;
 
+use Awobaz\Compoships\Compoships;
 use Illuminate\Database\Eloquent\Model;
 
 class BakuAwal extends Model
 {
+    use Compoships;
     protected $table = 'baku_awal';
     public $incrementing = false;
     protected $primaryKey = [
@@ -25,26 +27,28 @@ class BakuAwal extends Model
 
     public function sppt()
     {
-        return Sppt::where([
-            'kd_propinsi' => $this->kd_propinsi,
-            'kd_dati2' => $this->kd_dati2,
-            'kd_kecamatan' => $this->kd_kecamatan,
-            'kd_kelurahan' => $this->kd_kelurahan,
-            'kd_blok' => $this->kd_blok,
-            'no_urut' => $this->no_urut,
-            'thn_pajak_sppt' => $this->thn_pajak_sppt,
-        ])->first();
+        return $this->hasOne(
+            Sppt::class,
+            ['kd_propinsi', 'kd_dati2', 'kd_kecamatan', 'kd_kelurahan', 'kd_blok', 'no_urut', 'kd_jns_op', 'thn_pajak_sppt'],
+            ['kd_propinsi', 'kd_dati2', 'kd_kecamatan', 'kd_kelurahan', 'kd_blok', 'no_urut', 'kd_jns_op', 'thn_pajak_sppt']
+        );
     }
 
     public function penyampaian()
     {
-        return $this->hasOne(Penyampaian::class, 'kd_propinsi', 'kd_propinsi')
-            ->where('kd_dati2', $this->kd_dati2)
-            ->where('kd_kecamatan', $this->kd_kecamatan)
-            ->where('kd_kelurahan', $this->kd_kelurahan)
-            ->where('kd_blok', $this->kd_blok)
-            ->where('no_urut', $this->no_urut)
-            ->where('kd_jns_op', $this->kd_jns_op)
-            ->where('tahun', $this->thn_pajak_sppt);
+        return $this->hasOne(
+            Penyampaian::class,
+            ['kd_propinsi', 'kd_dati2', 'kd_kecamatan', 'kd_kelurahan', 'kd_blok', 'no_urut', 'kd_jns_op', 'tahun'],
+            ['kd_propinsi', 'kd_dati2', 'kd_kecamatan', 'kd_kelurahan', 'kd_blok', 'no_urut', 'kd_jns_op', 'thn_pajak_sppt']
+        );
+    }
+
+    public function datObjekPajak()
+    {
+        return $this->belongsTo(
+            DatObjekPajak::class,
+            ['kd_propinsi', 'kd_dati2', 'kd_kecamatan', 'kd_kelurahan', 'kd_blok', 'no_urut', 'kd_jns_op'],
+            ['kd_propinsi', 'kd_dati2', 'kd_kecamatan', 'kd_kelurahan', 'kd_blok', 'no_urut', 'kd_jns_op']
+        );
     }
 }

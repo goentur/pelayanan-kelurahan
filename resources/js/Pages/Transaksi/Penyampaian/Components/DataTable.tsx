@@ -10,11 +10,10 @@ type DataTableProps = {
         update: boolean;
     };
     dataTable: any[];
-    dataInfo: number;
+    loading: boolean;
     dataPenyampaianKeterangan: any[];
 };
-
-export default function DataTable({ gate, dataTable, dataPenyampaianKeterangan }: DataTableProps) {
+export default function DataTable({ gate, dataTable, loading, dataPenyampaianKeterangan }: DataTableProps) {
     const [loadingState, setLoadingState] = useState<{ [key: string]: boolean }>({});
     const [selectedItemTabel, setSelectedItemTabel] = useState<{ [key: string]: boolean }>({});
     const [editedData, setEditedData] = useState<{ [key: string]: { ya?: any; tidak?: string } }>({});
@@ -25,14 +24,16 @@ export default function DataTable({ gate, dataTable, dataPenyampaianKeterangan }
         setSelectedItemTabel((prev) => ({ ...prev, [index]: isYes }));
     };
 
-    const handleChange = async (id: string, type: "ya" | "tidak", value: any,nominal: string) => {
+    const handleChange = async (id: string, type: "ya" | "tidak", value: any,nama_wp : string, alamat_objek : string,nominal: string) => {
         setLoadingState((prev) => ({ ...prev, [id]: true }));
         try {
             const response = await axios.post(route('transaksi.penyampaian.store'), {
                 id: id,
                 type: type,
-                nominal: nominal,
                 value: value,
+                nama_wp: nama_wp,
+                alamat_objek: alamat_objek,
+                nominal: nominal,
             });
             setEditedData((prev) => ({
                 ...prev,
@@ -98,8 +99,8 @@ export default function DataTable({ gate, dataTable, dataPenyampaianKeterangan }
             <thead className="text-center text-sm">
             <tr className="uppercase leading-normal">
                 <th rowSpan={2} colSpan={3} className="px-2 border w-1">NOP</th>
-                <th rowSpan={2} className="px-2 border w-1/6">Nama</th>
-                <th rowSpan={2} className="px-2 border w-1/5">Alamat</th>
+                <th rowSpan={2} className="px-2 border w-1/6">Nama wajib pajak</th>
+                <th rowSpan={2} className="px-2 border w-1/5">Alamat objek</th>
                 <th rowSpan={2} className="px-2 border w-1">Pajak</th>
                 <th rowSpan={2} className="px-2 border w-1">Tipe</th>
                 <th colSpan={2} className="px-2 border text-center">TERSAMPAIKAN</th>
@@ -112,14 +113,23 @@ export default function DataTable({ gate, dataTable, dataPenyampaianKeterangan }
             </tr>
             </thead>
             <tbody className="font-light text-xs">
+            {loading && (
+                <tr>
+                    <td className='p-1' colSpan={11}>
+                        <div className="flex items-center justify-center">
+                            <Loader2 className="animate-spin me-2" size={18} />Mohon Tunggu...
+                        </div>
+                    </td>
+                </tr>
+            )}
             {dataTable.length > 0 ? (
                 dataTable.map((value: any, index: number) => (
                 <tr key={index} className="hover:bg-gray-100 dark:hover:bg-slate-900">
                     <td className="px-2 py-1 border w-1">{value.blok}</td>
                     <td className="px-2 py-1 border w-1">{value.no}</td>
                     <td className="px-2 py-1 border w-1">{value.jenis}</td>
-                    <td className="px-2 py-1 border">{value.nama}</td>
-                    <td className="px-2 py-1 border">{value.alamat}</td>
+                    <td className="px-2 py-1 border">{value.nama_wp}</td>
+                    <td className="px-2 py-1 border">{value.alamat_objek}</td>
                     <td className="px-2 py-1 border text-end">{value.pajak}</td>
                     <td className="px-2 py-1 border text-center">
                         {tipe[value.id] && tipe[value.id]?.type!=null && (
@@ -152,18 +162,18 @@ export default function DataTable({ gate, dataTable, dataPenyampaianKeterangan }
                         }
                     </td>
                     <td className="px-1 py-1 border">
-                        {selectedItemTabel[value.id] === true ? (
+                        {selectedItemTabel[value.id] == true ? (
                             <FormCalendar
                                 value={editedData[value.id]?.ya || null}
-                                onChange={(v) => handleChange(value.id, "ya", v, value.pajak)}
+                                onChange={(v) => handleChange(value.id, "ya", v, value.nama_wp, value.alamat_objek,value.pajak)}
                                 autoOpen={true}
                             />
-                        ) : selectedItemTabel[value.id] === false ? (
+                        ) : selectedItemTabel[value.id] == false ? (
                             <SelectPopover
                                 label=""
                                 selectedValue={editedData[value.id]?.tidak || ""}
                                 options={dataPenyampaianKeterangan}
-                                onSelect={(v) => handleChange(value.id, "tidak", v, value.pajak)}
+                                onSelect={(v) => handleChange(value.id, "tidak", v, value.nama_wp, value.alamat_objek,value.pajak)}
                                 error={""}
                                 autoOpen={true}
                             />
@@ -178,15 +188,15 @@ export default function DataTable({ gate, dataTable, dataPenyampaianKeterangan }
                     </td>
                 </tr>
                 ))
-            ) : (
+            ) : (!loading ?
                 <tr>
-                <td colSpan={11}>
-                    <div className="flex items-center justify-center">
-                    <DatabaseBackup size={18} className="me-2" /> Data tidak ditemukan
-                    </div>
-                </td>
+                    <td colSpan={11}>
+                        <div className="flex items-center justify-center">
+                        <DatabaseBackup size={18} className="me-2" /> Data tidak ditemukan
+                        </div>
+                    </td>
                 </tr>
-            )}
+            : null)}
             </tbody>
         </table>
         </div>

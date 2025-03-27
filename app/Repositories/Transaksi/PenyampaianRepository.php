@@ -29,7 +29,7 @@ class PenyampaianRepository
     public function data($request)
     {
         $nop = explode('.', $request->kelurahan);
-        $query = BakuAwal::select('kd_propinsi', 'kd_dati2', 'kd_kecamatan', 'kd_kelurahan', 'kd_blok', 'no_urut', 'kd_jns_op', 'thn_pajak_sppt', 'nm_wp_sppt', 'jln_wp_sppt', 'blok_kav_no_wp_sppt', 'pbb_yg_harus_dibayar_sppt')
+        $query = BakuAwal::with('datObjekPajak', 'penyampaian')->select('kd_propinsi', 'kd_dati2', 'kd_kecamatan', 'kd_kelurahan', 'kd_blok', 'no_urut', 'kd_jns_op', 'thn_pajak_sppt', 'nm_wp_sppt', 'pbb_yg_harus_dibayar_sppt')
             ->where([
                 'kd_propinsi' => $nop[0],
                 'kd_dati2' => $nop[1],
@@ -83,6 +83,8 @@ class PenyampaianRepository
                     'no_urut' => $nop[5],
                     'kd_jns_op' => $nop[6],
                     'tahun' => $tahun,
+                    'nama_wp' => $request->nama_wp,
+                    'alamat_objek' => $request->alamat_objek,
                     'nominal' => str_replace('.', '', $request->nominal),
                     'tipe' => $tipe,
                     'status' => PenyampaianStatus::SIMPAN,
@@ -121,7 +123,7 @@ class PenyampaianRepository
     public function queryLaporan($request)
     {
         $dataSatuanKerja = $this->satuanKerja->collectionData();
-        $query = $this->model::select('id', 'kd_propinsi', 'kd_dati2', 'kd_kecamatan', 'kd_kelurahan', 'kd_blok', 'no_urut', 'kd_jns_op', 'tahun', 'tipe', 'keterangan')
+        $query = $this->model::select('id', 'kd_propinsi', 'kd_dati2', 'kd_kecamatan', 'kd_kelurahan', 'kd_blok', 'no_urut', 'kd_jns_op', 'tahun', 'nama_wp', 'alamat_objek', 'nominal', 'tipe', 'keterangan')
             ->where([
                 'kd_propinsi' => $dataSatuanKerja['propinsi'],
                 'kd_dati2' => $dataSatuanKerja['dati2'],
@@ -135,14 +137,23 @@ class PenyampaianRepository
     public function queryLaporanSisa()
     {
         $dataSatuanKerja = $this->satuanKerja->collectionData();
-        $query = DB::table('baku_awal')->select('kd_propinsi', 'kd_dati2', 'kd_kecamatan', 'kd_kelurahan', 'kd_blok', 'no_urut', 'kd_jns_op', 'thn_pajak_sppt', 'nm_wp_sppt', 'jln_wp_sppt', 'blok_kav_no_wp_sppt', 'pbb_yg_harus_dibayar_sppt')
+        $query = DB::table('baku_awal')->select('baku_awal.kd_propinsi', 'baku_awal.kd_dati2', 'baku_awal.kd_kecamatan', 'baku_awal.kd_kelurahan', 'baku_awal.kd_blok', 'baku_awal.no_urut', 'baku_awal.kd_jns_op', 'baku_awal.thn_pajak_sppt', 'baku_awal.nm_wp_sppt', 'baku_awal.pbb_yg_harus_dibayar_sppt', 'dat_objek_pajak.jalan_op', 'dat_objek_pajak.blok_kav_no_op', 'dat_objek_pajak.rt_op', 'dat_objek_pajak.rw_op')
+            ->join('dat_objek_pajak', function ($query) {
+                $query->on('baku_awal.kd_propinsi', '=', 'dat_objek_pajak.kd_propinsi')
+                    ->on('baku_awal.kd_dati2', '=', 'dat_objek_pajak.kd_dati2')
+                    ->on('baku_awal.kd_kecamatan', '=', 'dat_objek_pajak.kd_kecamatan')
+                    ->on('baku_awal.kd_kelurahan', '=', 'dat_objek_pajak.kd_kelurahan')
+                    ->on('baku_awal.kd_blok', '=', 'dat_objek_pajak.kd_blok')
+                    ->on('baku_awal.no_urut', '=', 'dat_objek_pajak.no_urut')
+                    ->on('baku_awal.kd_jns_op', '=', 'dat_objek_pajak.kd_jns_op');
+            })
             ->where([
-                'kd_propinsi' => $dataSatuanKerja['propinsi'],
-                'kd_dati2' => $dataSatuanKerja['dati2'],
-                'kd_kecamatan' => $dataSatuanKerja['kecamatan'],
-                'thn_pajak_sppt' => date('Y'),
+                'baku_awal.kd_propinsi' => $dataSatuanKerja['propinsi'],
+                'baku_awal.kd_dati2' => $dataSatuanKerja['dati2'],
+                'baku_awal.kd_kecamatan' => $dataSatuanKerja['kecamatan'],
+                'baku_awal.thn_pajak_sppt' => date('Y'),
             ])
-            ->whereIn('kd_kelurahan', $dataSatuanKerja['kelurahan'])
+            ->whereIn('baku_awal.kd_kelurahan', $dataSatuanKerja['kelurahan'])
             ->whereNotExists(function ($query) {
                 $query->select(DB::raw(1))
                     ->from('penyampaians')
@@ -155,10 +166,10 @@ class PenyampaianRepository
                     ->whereRaw('penyampaians.kd_jns_op = baku_awal.kd_jns_op')
                     ->whereRaw('penyampaians.tahun = baku_awal.thn_pajak_sppt');
             })
-            ->orderBy('kd_kelurahan')
-            ->orderBy('kd_blok')
-            ->orderBy('no_urut')
-            ->orderBy('kd_jns_op');
+            ->orderBy('baku_awal.kd_kelurahan')
+            ->orderBy('baku_awal.kd_blok')
+            ->orderBy('baku_awal.no_urut')
+            ->orderBy('baku_awal.kd_jns_op');
         return $query;
     }
     public function dataLaporan($request)
@@ -185,6 +196,7 @@ class PenyampaianRepository
                     foreach ($batches as $item) {
                         Penyampaian::create([
                             'user_id' => $userId,
+                            'jenis_lapor_id' => $request->id,
                             'kd_propinsi' => $item->kd_propinsi,
                             'kd_dati2' => $item->kd_dati2,
                             'kd_kecamatan' => $item->kd_kecamatan,
@@ -193,10 +205,16 @@ class PenyampaianRepository
                             'no_urut' => $item->no_urut,
                             'kd_jns_op' => $item->kd_jns_op,
                             'tahun' => $item->thn_pajak_sppt,
+                            'nama_wp' => $item->nm_wp_sppt,
+                            'alamat_objek' => trim(implode(' ', array_filter([
+                                $item->jalan_op,
+                                $item->blok_kav_no_op,
+                                (!blank($item->rt_op) && !blank($item->rw_op)) ? "RT/RW {$item->rt_op}/{$item->rw_op}" : null
+                            ]))),
+                            'nominal' => $item->pbb_yg_harus_dibayar_sppt,
                             'tipe' => $tipe,
                             'status' => $status,
                             'keterangan' => $keterangan,
-                            'jenis_lapor_id' => $request->id,
                         ]);
                     }
                 });

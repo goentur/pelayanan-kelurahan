@@ -5,6 +5,7 @@ namespace App\Repositories\Master\SatuanKerja;
 use App\Http\Resources\Common\LabelValueResource;
 use App\Http\Resources\SatuanKerja\LabelValueResource as SatuanKerjaLabelValueResource;
 use App\Http\Resources\SatuanKerja\SatuanKerjaResource;
+use App\Models\Pegawai;
 use App\Models\SatuanKerja;
 use App\Models\User;
 use Illuminate\Support\Facades\DB;

@@ -23,8 +23,18 @@ class DataResource extends JsonResource
                'blok' => $this->kd_blok,
                'jenis' => $this->kd_jns_op,
                'no' => $this->no_urut,
-               'nama' => $this->nm_wp_sppt,
-               'alamat' => $this->jln_wp_sppt . ' ' . $this->blok_kav_no_wp_sppt,
+               'nama_wp' => $this->nm_wp_sppt,
+               'alamat_objek' => $this->when(!blank($this->datObjekPajak), function () {
+                    $alamat = [
+                         $this->datObjekPajak->jalan_op,
+                         $this->datObjekPajak->blok_kav_no_op
+                    ];
+                    if (!blank($this->datObjekPajak->rt_op) && !blank($this->datObjekPajak->rw_op)) {
+                         $alamat[] = "RT/RW {$this->datObjekPajak->rt_op}/{$this->datObjekPajak->rw_op}";
+                    }
+
+                    return trim(implode(' ', array_filter($alamat)));
+               }),
                'pajak' => Helpers::ribuan($this->pbb_yg_harus_dibayar_sppt),
                'penyampaian' => $this->when(!blank($this->penyampaian), function () {
                     return [

@@ -12,9 +12,9 @@ export default function DataTable({ dataTable,loading }: DataTableProps) {
                 <tr className="uppercase leading-normal">
                     <th colSpan={4} className="px-2 border w-1">NOP</th>
                     <th className="px-2 border w-1/6">Nama</th>
-                    <th className="px-2 border w-1/5">Alamat</th>
+                    <th className="px-2 border">Alamat</th>
                     <th className="px-2 border w-1">Pajak</th>
-                    <th className="px-2 border">Keterangan</th>
+                    <th className="px-2 border w-1/5">Keterangan</th>
                 </tr>
             </thead>
             <tbody className="font-light text-xs">

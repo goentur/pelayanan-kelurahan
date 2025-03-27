@@ -175,7 +175,7 @@ export default function Index({gate, jenisBuku}:indexProps) {
                             </div>
                         </div>
                     </form>
-                    <DataTable gate={gate} dataTable={dataTable} dataInfo={dataInfo.from}dataPenyampaianKeterangan={dataPenyampaianKeterangan} />
+                    <DataTable gate={gate} dataTable={dataTable} loading={loading} dataPenyampaianKeterangan={dataPenyampaianKeterangan} />
                     <PaginationControls dataInfo={dataInfo} setDataInfo={setDataInfo} linksPagination={linksPagination} />
                 </CardContent>
             </Card>

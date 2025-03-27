@@ -32,4 +32,9 @@ class SatuanKerja extends Model
     {
         return $this->hasMany(RefKelurahan::class, 'kd_kel_br', 'kode_ref_kelurahan')->where('kd_kecamatan', $this->atasan->kode_ref_kelurahan);
     }
+
+    public function pegawai()
+    {
+        return $this->hasMany(Pegawai::class)->where('kd_kecamatan', $this->atasan->kode_ref_kelurahan);
+    }
 }

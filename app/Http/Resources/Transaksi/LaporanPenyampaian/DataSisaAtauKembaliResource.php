@@ -22,7 +22,11 @@ class DataSisaAtauKembaliResource extends JsonResource
                'no' => $this->no_urut,
                'jenis' => $this->kd_jns_op,
                'nama' => $this->nm_wp_sppt,
-               'alamat' => $this->jln_wp_sppt . ' ' . $this->blok_kav_no_wp_sppt,
+               'alamat' => trim(implode(' ', array_filter([
+                    $this->jalan_op,
+                    $this->blok_kav_no_op,
+                    (!blank($this->rt_op) && !blank($this->rw_op)) ? "RT/RW {$this->rt_op}/{$this->rw_op}" : null
+               ]))),
                'pajak' => Helpers::ribuan($this->pbb_yg_harus_dibayar_sppt),
                'keterangan' => 'SISA ATAU KEMBALI',
           ];

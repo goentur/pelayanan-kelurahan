@@ -42,6 +42,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
                 Route::get('{jenisLapor}', 'form')->name('form');
                 Route::post('data', 'data')->name('data');
                 Route::post('simpan', 'simpan')->name('simpan');
+                Route::post('berdasarkan-kelurahan', 'berdasarkanKelurahan')->name('berdasarkan-kelurahan');
+                Route::post('gabungan/{jenisLapor}', 'gabungan')->name('gabungan');
             });
         });
     });

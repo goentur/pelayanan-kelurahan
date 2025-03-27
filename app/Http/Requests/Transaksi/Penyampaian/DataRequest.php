@@ -28,6 +28,7 @@ class DataRequest extends FormRequest
                'kelurahan' => 'required|string',
                'kd_blok' => 'nullable|numeric|digits:3',
                'no_urut' => 'nullable|numeric|digits:4',
+               'nama_wp' => 'nullable|string',
           ];
      }
 }

@@ -23,9 +23,9 @@ class DataResource extends JsonResource
                'blok' => $this->kd_blok,
                'no' => $this->no_urut,
                'jenis' => $this->kd_jns_op,
-               'nama' => $this->when(!blank($this->bakuAwal), $this->bakuAwal->nm_wp_sppt),
-               'alamat' => $this->when(!blank($this->bakuAwal), $this->bakuAwal->jln_wp_sppt . ' ' . $this->bakuAwal->blok_kav_no_wp_sppt),
-               'pajak' => $this->when(!blank($this->bakuAwal), Helpers::ribuan($this->bakuAwal->pbb_yg_harus_dibayar_sppt)),
+               'nama' => $this->nama_wp,
+               'alamat' => $this->alamat_objek,
+               'pajak' => Helpers::ribuan($this->nominal),
                'keterangan' => $this->tipe == PenyampaianTipe::TERSAMPAIKAN->value ? Carbon::parse($this->keterangan)->format('d-m-Y') : $this->keterangan,
           ];
      }

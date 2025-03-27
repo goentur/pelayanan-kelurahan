@@ -1,17 +1,16 @@
-import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/Components/ui/card';
-import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
-import { Head, useForm } from '@inertiajs/react';
-import DataTable from './Components/DataTable';
-import { useEffect, useState } from 'react';
-import axios from 'axios';
-import { alertApp } from '@/utils';
-import SelectPopover from '@/Components/SelectPopover';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/Components/ui/select';
-import { Label } from '@/Components/ui/label';
-import { Button } from '@/Components/ui/button';
-import { Loader2, Search, Send } from 'lucide-react';
 import PaginationControls from '@/Components/PaginationControls';
+import { Button } from '@/Components/ui/button';
+import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/Components/ui/card';
 import { Checkbox } from '@/Components/ui/checkbox';
+import { Label } from '@/Components/ui/label';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/Components/ui/select';
+import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
+import { alertApp } from '@/utils';
+import { Head } from '@inertiajs/react';
+import axios from 'axios';
+import { Loader2, Send } from 'lucide-react';
+import { useEffect, useState } from 'react';
+import DataTable from './Components/DataTable';
 
 type dataProps = {
     jenisLapor : any

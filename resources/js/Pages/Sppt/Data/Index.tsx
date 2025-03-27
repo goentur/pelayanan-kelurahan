@@ -38,6 +38,7 @@ export default function Index({jenisBuku}:indexProps) {
         kelurahan : '',
         kd_blok : '',
         no_urut : '',
+        nama_wp : '',
     });
 
     useEffect(() => {
@@ -61,6 +62,7 @@ export default function Index({jenisBuku}:indexProps) {
                     kelurahan: data.kelurahan,
                     kd_blok: data.kd_blok,
                     no_urut: data.no_urut,
+                    nama_wp: data.nama_wp,
                 });
                 setDataTable(response.data.data);
                 setLinksPagination(response.data.links);
@@ -114,26 +116,39 @@ export default function Index({jenisBuku}:indexProps) {
                                 </div>
                             </div>
                             <div>
-                                <div className="grid gap-2 mb-3">
-                                    <Label htmlFor="kd_blok" className="capitalize">kd blok</Label>
-                                    <Input
-                                        id="kd_blok"
-                                        name="kd_blok"
-                                        type="text"
-                                        value={data.kd_blok}
-                                        placeholder="Masukkan kd blok"
-                                        onChange={(e) => setData((prevData:any) => ({ ...prevData, kd_blok: e.target.value }))}
-                                    />
+                                <div className='grid gap-2 lg:grid-cols-2 md:grid-cols-2 mb-3'>
+                                    <div>
+                                        <Label htmlFor="kd_blok" className="capitalize">kd blok</Label>
+                                        <Input
+                                            id="kd_blok"
+                                            name="kd_blok"
+                                            type="text"
+                                            value={data.kd_blok}
+                                            placeholder="Masukkan kd blok"
+                                            onChange={(e) => setData((prevData:any) => ({ ...prevData, kd_blok: e.target.value }))}
+                                        />
+                                    </div>
+                                    <div>
+                                        <Label htmlFor="no_urut" className="capitalize">no urut</Label>
+                                        <Input
+                                            id="no_urut"
+                                            name="no_urut"
+                                            type="text"
+                                            value={data.no_urut}
+                                            placeholder="Masukkan no urut"
+                                            onChange={(e) => setData((prevData:any) => ({ ...prevData, no_urut: e.target.value }))}
+                                        />
+                                    </div>
                                 </div>
                                 <div className="grid gap-2">
-                                    <Label htmlFor="no_urut" className="capitalize">no urut</Label>
+                                    <Label htmlFor="nama_wp" className="capitalize">nama wajib pajak</Label>
                                     <Input
-                                        id="no_urut"
-                                        name="no_urut"
+                                        id="nama_wp"
+                                        name="nama_wp"
                                         type="text"
-                                        value={data.no_urut}
-                                        placeholder="Masukkan no urut"
-                                        onChange={(e) => setData((prevData:any) => ({ ...prevData, no_urut: e.target.value }))}
+                                        value={data.nama_wp}
+                                        placeholder="Masukkan nama wajib pajak"
+                                        onChange={(e) => setData((prevData:any) => ({ ...prevData, nama_wp: e.target.value }))}
                                     />
                                 </div>
                             </div>
@@ -161,7 +176,7 @@ export default function Index({jenisBuku}:indexProps) {
                             </div>
                         </div>
                     </form>
-                    <DataTable dataTable={dataTable} />
+                    <DataTable loading={loading} dataTable={dataTable} />
                     <PaginationControls dataInfo={dataInfo} setDataInfo={setDataInfo} linksPagination={linksPagination} />
                 </CardContent>
             </Card>

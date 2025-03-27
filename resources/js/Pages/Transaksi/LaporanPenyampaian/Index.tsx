@@ -61,7 +61,7 @@ export default function Index({gate}:indexProps) {
                                 className={`grid gap-2 border p-3 rounded-lg ${
                                     !value.status ? ' cursor-not-allowed opacity-50' : ''
                                 }`}
-                                onClick={(e) => !value.status && e.preventDefault()} // Cegah navigasi jika status true
+                                onClick={(e) => !value.status && e.preventDefault()}
                             >
                                 <span className="text-xl font-semibold uppercase">{value.nama}</span>
                                 <span className="text-sm">{value.keterangan}</span>
