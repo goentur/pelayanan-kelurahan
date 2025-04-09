@@ -1,5 +1,6 @@
 import {
 	Building,
+	ChartPie,
 	FileCheck2,
 	FileMinus2,
 	FileSearch,
@@ -41,6 +42,28 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
 			name: user.name,
 			email: user.email,
 		},
+		menuDashboard: [
+			{
+				title: "Realisasi",
+				url: "dashboard.realisasi.index",
+				icon: ChartPie,
+				permission: 'dashboard-realisasi',
+			},
+		],
+		menuTransaksi: [
+			{
+				title: "Penyampaian",
+				url: "transaksi.penyampaian.index",
+				icon: Building,
+				permission: 'penyampaian-index',
+			},
+			{
+				title: "Laporan Penyampaian",
+				url: "transaksi.laporan-penyampaian.index",
+				icon: Send,
+				permission: 'laporan-penyampaian-index',
+			},
+		],
 		menuMaster: [
 			{
 				title: "Satuan Kerja",
@@ -71,20 +94,6 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
 				url: "master.jenis-lapor.index",
 				icon: Send,
 				permission: 'jenis-lapor-index',
-			},
-		],
-		menuTransaksi: [
-			{
-				title: "Penyampaian",
-				url: "transaksi.penyampaian.index",
-				icon: Building,
-				permission: 'penyampaian-index',
-			},
-			{
-				title: "Laporan Penyampaian",
-				url: "transaksi.laporan-penyampaian.index",
-				icon: Send,
-				permission: 'laporan-penyampaian-index',
 			},
 		],
 		menuSppt: [
@@ -128,7 +137,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
 			<SidebarMenu>
 				<SidebarMenuItem>
 					<SidebarMenuButton size="lg" asChild>
-					<Link href={route('dashboard')}>
+					<Link href={route('beranda')}>
 						<div className="flex aspect-square size-8 items-center justify-center rounded-lg bg-sidebar-primary text-sidebar-primary-foreground">
 						<MapPinHouse className="size-4" />
 						</div>
@@ -142,6 +151,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
 			</SidebarMenu>
 		</SidebarHeader>
 		<SidebarContent className="sidebar-scrollbar">
+			<NavMain items={data.menuDashboard} title={'Dasboard'} permissions={permissions} />
 			<NavMain items={data.menuTransaksi} title={'Transaksi'} permissions={permissions} />
 			<NavMain items={data.menuSppt} title={'SPPT'} permissions={permissions} />
 			<NavMain items={data.menuMaster} title={'Master'} permissions={permissions} />

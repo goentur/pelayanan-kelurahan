@@ -2,14 +2,14 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/Com
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import { Head } from '@inertiajs/react';
 
-export default function Dashboard() {
-    const judul = "Dashboard"
+export default function Beranda() {
+    const judul = "Beranda"
     return (
         <AuthenticatedLayout header={judul}>
             <Head title={judul} />
             <Card>
                 <CardHeader>
-                    <CardTitle className="text-xl">Dashboard</CardTitle>
+                    <CardTitle className="text-xl">Beranda</CardTitle>
                 </CardHeader>
                 <CardContent>
                     You're logged in!

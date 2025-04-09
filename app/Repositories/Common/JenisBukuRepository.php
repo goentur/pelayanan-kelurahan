@@ -25,6 +25,9 @@ class JenisBukuRepository
      public function dataNominal($request)
      {
           $buku = explode(',', $request);
+          if (empty($buku) || count($buku) === 0) {
+               $buku = $request;
+          }
           $rmin = Memo::forDay('ref-buku-min-' . Arr::first($buku), function () use ($buku) {
                return $this->model::firstWhere('kd_buku', Arr::first($buku));
           });

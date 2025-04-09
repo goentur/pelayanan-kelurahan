@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Dashboard\RealisasiController;
 use App\Http\Controllers\Master\JabatanController;
 use App\Http\Controllers\Master\JenisLaporController;
 use App\Http\Controllers\Master\PegawaiController;
@@ -20,14 +21,22 @@ Route::get('/', function () {
     return redirect('login');
 })->name('/');
 
-Route::get('/dashboard', function () {
-    return Inertia::render('Dashboard');
-})->middleware(['auth', 'verified'])->name('dashboard');
+Route::get('/beranda', function () {
+    return Inertia::render('Beranda');
+})->middleware(['auth', 'verified'])->name('beranda');
 
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+    Route::prefix('dashboard')->name('dashboard.')->group(function () {
+        Route::prefix('realisasi')->name('realisasi.')->group(function () {
+            Route::middleware('can:dashboard-realisasi')->controller(RealisasiController::class)->group(function () {
+                Route::get('/', 'index')->name('index');
+                Route::post('/', 'data')->name('data');
+            });
+        });
+    });
     Route::prefix('transaksi')->name('transaksi.')->group(function () {
         Route::prefix('penyampaian')->name('penyampaian.')->group(function () {
             Route::middleware('can:penyampaian-index')->controller(PenyampaianController::class)->group(function () {

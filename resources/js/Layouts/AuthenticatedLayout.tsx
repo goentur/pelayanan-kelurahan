@@ -37,8 +37,8 @@ export default function Authenticated({
             <Breadcrumb>
               <BreadcrumbList>
                 <BreadcrumbItem className="hidden md:block font-semibold">
-                  <Link href={route('dashboard')}>
-                    Home
+                  <Link href={route('beranda')}>
+                    Beranda
                   </Link>
                 </BreadcrumbItem>
                 <BreadcrumbSeparator className="hidden md:block" />
