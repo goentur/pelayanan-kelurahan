@@ -5,7 +5,7 @@ import { Input } from "@/Components/ui/input";
 import { format } from "date-fns";
 
 interface DatePickerProps {
-  value: Date | null;
+  value: Date;
   onChange: (date: Date | null) => void;
   label?: string;
   autoOpen?: boolean;
