@@ -35,6 +35,7 @@ class RealisasiRepository
                $bakuAwal = $this->bakuAwal($value, $satuanKerja);
                $sppt = $this->sppt($value, $satuanKerja);
                $penyampaian = $this->penyampaian($value, $satuanKerja);
+               $pembayaran = $this->pembayaran($value, $satuanKerja);
 
                $bakuAwaljumlah += $bakuAwal->jumlah;
                $bakuAwalsppt += $bakuAwal->sppt;
@@ -45,8 +46,8 @@ class RealisasiRepository
                $penyampaianjumlah += $penyampaian->jumlah;
                $penyampaiansppt += $penyampaian->sppt;
 
-               $pembayaranjumlah += 0;
-               $pembayaransppt += 0;
+               $pembayaranjumlah += $pembayaran->jumlah;
+               $pembayaransppt += $pembayaran->sppt;
 
                $data[$value] = [
                     'bakuAwal' => [
@@ -62,8 +63,8 @@ class RealisasiRepository
                          'sppt' => Helpers::ribuan($penyampaian->sppt),
                     ],
                     'pembayaran' => [
-                         'jumlah' => Helpers::ribuan(0),
-                         'sppt' => Helpers::ribuan(0),
+                         'jumlah' => Helpers::ribuan($pembayaran->jumlah),
+                         'sppt' => Helpers::ribuan($pembayaran->sppt),
                     ],
                ];
           }
@@ -135,14 +136,22 @@ class RealisasiRepository
      public function pembayaran($jenisBuku, $kelurahan = null)
      {
           $nominal = $this->jenisBuku->dataNominal($jenisBuku);
-          return PembayaranSppt::select(
-               DB::raw('COALESCE(SUM(jml_sppt_yg_dibayar), 0) as jumlah'),
+          return Sppt::select(
+               DB::raw('COALESCE(SUM(pbb_yg_harus_dibayar_sppt), 0) as jumlah'),
                DB::raw('COALESCE(COUNT(kd_propinsi), 0) as sppt')
           )->where([
                'kd_propinsi' => $kelurahan['propinsi'],
                'kd_dati2' => $kelurahan['dati2'],
                'kd_kecamatan' => $kelurahan['kecamatan'],
                'thn_pajak_sppt' => date('Y'),
-          ])->whereIn('kd_kelurahan', $kelurahan['kelurahan'])->whereBetween('jml_sppt_yg_dibayar', [$nominal['min'], $nominal['max']])->first();
+          ])->whereIn('kd_kelurahan', $kelurahan['kelurahan'])
+               ->whereBetween('pbb_yg_harus_dibayar_sppt', [$nominal['min'], $nominal['max']])
+               ->whereHas('pembayaranSppt', fn($q) => $q->where([
+                    'kd_propinsi' => $kelurahan['propinsi'],
+                    'kd_dati2' => $kelurahan['dati2'],
+                    'kd_kecamatan' => $kelurahan['kecamatan'],
+                    'thn_pajak_sppt' => date('Y'),
+               ])->whereIn('kd_kelurahan', $kelurahan['kelurahan']))
+               ->first();
      }
 }
