@@ -5,7 +5,7 @@ import { Transition } from '@headlessui/react';
 import { Head, useForm } from '@inertiajs/react';
 import { Eraser, Loader2, Save } from 'lucide-react';
 import { FormEventHandler } from 'react';
-import FormBakuAwal from './Components/FormBakuAwal';
+// import FormBakuAwal from './Components/FormBakuAwal';
 
 export default function Index() {
     const judul = "Aplikasi"
@@ -50,7 +50,7 @@ export default function Index() {
                     </div>
                     
                     <div className="flex gap-4 mt-5">
-                        <FormBakuAwal/>
+                        {/* <FormBakuAwal/> */}
                     </div>
                 </CardContent>
             </Card>
